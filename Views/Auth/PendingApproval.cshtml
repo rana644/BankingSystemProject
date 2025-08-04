@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Pending Approval";
+}
+
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <div class="card shadow-lg border-0 rounded-4" style="max-width: 500px; width: 100%;">
+        <div class="card-body text-center p-5">
+            <div class="mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="#007F3E" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+                    <path d="M2 15.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V14a1 1 0 0 0-1-1h-.5v-1a3 3 0 0 0-1.5-2.6 3 3 0 0 0 1.5-2.6V6h.5a1 1 0 0 0 1-1V.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5V5a1 1 0 0 0 1 1h.5v1a3 3 0 0 0 1.5 2.6A3 3 0 0 0 3.5 12v1h-.5a1 1 0 0 0-1 1v1.5zM3 6V1h10v5H3zm0 9v-2h10v2H3zm8-3H5v-1a2 2 0 0 1 4 0v1z" />
+                </svg>
+            </div>
+            <h2 class="text-success fw-bold mb-3">Your Request is Pending</h2>
+            <p class="text-muted mb-4">
+                Thank you for your interest in opening an account. <br />
+                Our team is reviewing your request and will notify you once it's approved.
+            </p>
+            <a href="@Url.Action("Login", "Auth")" class="btn btn-outline-success rounded-pill px-4">
+                Back to Login
+            </a>
+        </div>
+    </div>
+</div>

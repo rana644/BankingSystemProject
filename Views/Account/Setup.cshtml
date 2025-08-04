@@ -1,0 +1,89 @@
+﻿@model BankingSystem1.ViewModels.AccountSetupViewModel
+
+@{
+    ViewBag.Title = "Complete Account Setup";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-0 rounded-4 overflow-hidden">
+                <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #006341, #bfa046);">
+                    <h4 class="mb-1">
+                        <i class="bi bi-person-gear me-2"></i> Complete Your Account Setup
+                    </h4>
+                    <p class="mb-0 small">Choose your account type, branch, and currency</p>
+                </div>
+
+                <div class="card-body px-4 py-4">
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger text-center rounded-pill fw-semibold shadow-sm">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["Error"]
+                        </div>
+                    }
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center rounded-pill fw-semibold shadow-sm">
+                            <i class="bi bi-x-circle-fill me-2"></i>@ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-action="Setup" method="post" novalidate>
+
+                        <div class="mb-4">
+                            <label asp-for="SelectedAccountTypeId" class="form-label fw-semibold">
+                                <i class="bi bi-bank2 me-1"></i> Account Type
+                            </label>
+                            <select asp-for="SelectedAccountTypeId"
+                                    class="form-select form-select-lg rounded-pill shadow-sm"
+                                    asp-items="@(new SelectList(Model.AccountTypes, nameof(BankingSystem1.Models.AccountType.AccountTypeId), nameof(BankingSystem1.Models.AccountType.TypeName)))">
+                                <option value="">-- Select Account Type --</option>
+                            </select>
+                            <span asp-validation-for="SelectedAccountTypeId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="SelectedBranchId" class="form-label fw-semibold">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Branch
+                            </label>
+                            <select asp-for="SelectedBranchId"
+                                    class="form-select form-select-lg rounded-pill shadow-sm"
+                                    asp-items="@(new SelectList(Model.Branches, nameof(BankingSystem1.Models.Branch.BranchId), nameof(BankingSystem1.Models.Branch.BranchName)))">
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                            <span asp-validation-for="SelectedBranchId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="SelectedCurrencyId" class="form-label fw-semibold">
+                                <i class="bi bi-currency-exchange me-1"></i> Currency
+                            </label>
+                            <select asp-for="SelectedCurrencyId"
+                                    class="form-select form-select-lg rounded-pill shadow-sm"
+                                    asp-items="@(new SelectList(Model.Currencies, nameof(BankingSystem1.Models.Currency.CurrencyId), nameof(BankingSystem1.Models.Currency.Name)))">
+                                <option value="">-- Select Currency --</option>
+                            </select>
+                            <span asp-validation-for="SelectedCurrencyId" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm">
+                                <i class="bi bi-check-circle-fill me-2"></i> Create Account
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

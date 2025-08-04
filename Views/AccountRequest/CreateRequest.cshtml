@@ -1,0 +1,109 @@
+﻿@model BankingSystem1.ViewModels.AccountCreationRequestViewModel
+
+@{
+    ViewData["Title"] = "Request Account Creation";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-success text-white text-center rounded-top-4 py-4">
+                    <h4 class="mb-1">
+                        <i class="bi bi-person-plus-fill me-2"></i> Account Creation Request
+                    </h4>
+                    <p class="mb-0 small">Fill in your details to request an account</p>
+                </div>
+                <div class="card-body px-4 py-5 bg-light-subtle">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center rounded-pill fw-semibold">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewBag.Error
+                        </div>
+                    }
+
+                    <form method="post" asp-controller="AccountRequest" asp-action="CreateRequest" novalidate>
+
+                        <div class="mb-3">
+                            <label asp-for="FirstName" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-person-fill me-1"></i> First Name
+                            </label>
+                            <input asp-for="FirstName" class="form-control form-control-lg rounded-pill" placeholder="Enter your first name" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LastName" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-person-fill me-1"></i> Last Name
+                            </label>
+                            <input asp-for="LastName" class="form-control form-control-lg rounded-pill" placeholder="Enter your last name" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-envelope-fill me-1"></i> Email
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg rounded-pill" placeholder="example@email.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNo" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-telephone-fill me-1"></i> Phone Number
+                            </label>
+                            <input asp-for="PhoneNo" class="form-control form-control-lg rounded-pill" placeholder="01XXXXXXXXX" />
+                            <span asp-validation-for="PhoneNo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Address
+                            </label>
+                            <input asp-for="Address" class="form-control form-control-lg rounded-pill" placeholder="Your address" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold text-dark">
+                                <i class="bi bi-lock-fill me-1"></i> Password
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" id="passwordInput" class="form-control form-control-lg rounded-start-pill" placeholder="Create a password" />
+                                <button class="btn btn-outline-secondary rounded-end-pill" type="button" id="togglePassword">
+                                    <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm">
+                                <i class="bi bi-check-circle-fill me-2"></i> Submit Request
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        const toggleBtn = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("passwordInput");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        toggleBtn.addEventListener("click", function () {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeIcon.classList.toggle("bi-eye");
+            eyeIcon.classList.toggle("bi-eye-slash");
+        });
+    </script>
+}

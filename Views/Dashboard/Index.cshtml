@@ -1,0 +1,91 @@
+﻿@model List<BankingSystem1.Models.Account>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container py-5">
+
+    <!-- Welcome Banner -->
+    <div class="p-4 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(90deg, #004225, #007f5f); color: white;">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-bank2 me-2"></i>Welcome, @ViewBag.UserName
+        </h2>
+        <p class="mb-0 text-light">Here’s a summary of your accounts at NBE</p>
+    </div>
+
+    <!-- Accounts Overview Card -->
+    <div class="card border-0 shadow rounded-4 mb-5">
+        <div class="card-header bg-success text-white rounded-top-4 py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-wallet2 me-2"></i>Your Active Accounts
+            </h5>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-exclamation-circle fs-1 text-muted mb-3"></i>
+                    <p class="text-muted fs-5">No accounts found. You can request a new account below.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-success text-dark">
+                            <tr>
+                                <th><i class="bi bi-card-heading me-1"></i> Type</th>
+                                <th><i class="bi bi-check2-circle me-1"></i> Status</th>
+                                <th><i class="bi bi-currency-exchange me-1"></i> Balance</th>
+                                <th><i class="bi bi-cash-coin me-1"></i> Currency</th>
+                                <th><i class="bi bi-calendar-date me-1"></i> Date Opened</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@account.AccountType.TypeName</td>
+                                    <td>
+                                        <span class="badge rounded-pill @GetStatusClass(account.AccountStatus.StatusName)">
+                                            @account.AccountStatus.StatusName
+                                        </span>
+                                    </td>
+                                    <td class="fw-semibold">@($"{account.Balance:N2}")</td>
+                                    <td class="text-muted">@account.Currency?.Name</td>
+                                    <td>@(account.DateOpened?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end gap-3">
+        <a class="btn btn-outline-success btn-lg px-4 rounded-3 shadow-sm" asp-controller="Account" asp-action="Setup">
+            <i class="bi bi-plus-circle me-2"></i> Request New Account
+        </a>
+        <a class="btn btn-warning text-white btn-lg px-4 rounded-3 shadow-sm" asp-controller="Transaction" asp-action="Create">
+            <i class="bi bi-arrow-left-right me-2"></i> Make a Transaction
+        </a>
+    </div>
+
+@functions {
+    private string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Active" => "bg-success text-white",
+            "Pending" => "bg-warning text-dark",
+            "Closed" => "bg-secondary text-white",
+            _ => "bg-light text-dark"
+        };
+    }
+}
+
+

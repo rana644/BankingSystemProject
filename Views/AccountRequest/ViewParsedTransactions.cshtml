@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ParsedTransactionData>
+@{
+    ViewData["Title"] = "Parsed Transactions";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-success"><i class="bi bi-file-earmark-bar-graph me-2"></i> Parsed Transaction Data</h2>
+        <p class="text-muted">Detailed overview of all extracted transactions.</p>
+    </div>
+
+    <div class="text-end mb-3">
+        <a asp-action="ExportToPdf" class="btn btn-outline-danger">
+            <i class="bi bi-filetype-pdf me-1"></i> Export as PDF
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle me-1"></i> No parsed transactions found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive rounded-4 shadow">
+            <table class="table table-striped table-hover align-middle text-center">
+                <thead class="table-success">
+                    <tr>
+                        <th>Sender</th>
+                        <th>Sender Type</th>
+                        <th>Sender Currency</th>
+                        <th>Receiver</th>
+                        <th>Receiver Type</th>
+                        <th>Receiver Currency</th>
+                        <th>Sender Amount</th>
+                        <th>Receiver Amount</th>
+                        <th>Exchange Rate</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody class="table-light">
+                    @foreach (var tx in Model)
+                    {
+                        <tr>
+                            <td>@tx.SenderFirstName @tx.SenderLastName</td>
+                            <td>@tx.SenderAccountType</td>
+                            <td>@tx.SenderCurrency</td>
+                            <td>@tx.ReceiverFirstName @tx.ReceiverLastName</td>
+                            <td>@tx.ReceiverAccountType</td>
+                            <td>@tx.ReceiverCurrency</td>
+                            <td>@tx.SenderAmount</td>
+                            <td>@tx.ReceiverAmount</td>
+                            <td>@tx.ExchangeRate</td>
+                            <td>@tx.TransactionTimestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

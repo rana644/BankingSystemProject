@@ -1,0 +1,111 @@
+﻿@model List<BankingSystem1.Models.AccountCreationRequest>
+
+@{
+    ViewData["Title"] = "Account Requests";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success">
+            <i class="bi bi-person-lines-fill me-2"></i> Account Creation Requests
+        </h2>
+        <p class="text-muted">Review, approve, or reject pending user requests</p>
+    </div>
+
+    <!-- Extract & Parse Transactions Button -->
+    <div class="text-end mb-4">
+        <form asp-action="ExtractAndParseTransactions" asp-controller="AccountRequest" method="post">
+            <button type="submit" class="btn btn-warning rounded-pill px-4 shadow-sm">
+                <i class="bi bi-database-fill-up me-1"></i> Extract & Parse Transactions
+            </button>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow rounded-4">
+        <div class="card-body p-4">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center my-4">
+                    <i class="bi bi-info-circle me-1"></i> No pending account requests at the moment.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead class="bg-success text-white">
+                            <tr>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Requested At</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-light">
+                            @foreach (var r in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@r.FirstName @r.LastName</td>
+                                    <td>@r.Email</td>
+                                    <td>@r.PhoneNo</td>
+                                    <td>@r.Address</td>
+                                    <td>@r.RequestDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>
+                                        @switch (r.Status)
+                                        {
+                                            case "Approved":
+                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-2">
+                                                    <i class="bi bi-check-circle me-1"></i> Approved
+                                                </span>
+                                                ;
+                                                break;
+                                            case "Rejected":
+                                                <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-3 py-2">
+                                                    <i class="bi bi-x-circle me-1"></i> Rejected
+                                                </span>
+                                                ;
+                                                break;
+                                            default:
+                                                <span class="badge bg-warning-subtle text-dark rounded-pill px-3 py-2">
+                                                    <i class="bi bi-hourglass-split me-1"></i> Pending
+                                                </span>
+                                                ;
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (r.Status == "Pending")
+                                        {
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <form asp-action="Approve" asp-controller="AccountRequest" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" value="@r.Id" />
+                                                    <button type="submit" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                                        <i class="bi bi-check2-circle me-1"></i> Approve
+                                                    </button>
+                                                </form>
+
+                                                <form asp-action="Reject" asp-controller="AccountRequest" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" value="@r.Id" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                                        <i class="bi bi-x-circle me-1"></i> Reject
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No Action</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

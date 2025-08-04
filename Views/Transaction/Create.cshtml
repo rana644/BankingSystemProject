@@ -1,0 +1,120 @@
+﻿@{ 
+    ViewData["Title"] = "Make Transaction";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header text-white text-center rounded-top-4 py-4" style="background: linear-gradient(135deg, #007F3E, #B59B10);">
+                    <h4 class="mb-1">
+                        <i class="bi bi-arrow-left-right me-2"></i> Transfer Funds
+                    </h4>
+                    <p class="mb-0 small">Quick and secure money transfer</p>
+                </div>
+
+                <div class="card-body p-5">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center fw-semibold mb-4">
+                            <i class="bi bi-exclamation-circle me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success text-center fw-semibold mb-4">
+                            <i class="bi bi-check-circle me-2"></i> @ViewBag.Success
+                        </div>
+                    }
+
+                    <form method="post" novalidate>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold"><i class="bi bi-wallet2 me-1"></i> Sender Account</label>
+                            <select id="senderAccountId" name="senderAccountId" class="form-select shadow-sm rounded-3">
+                                @foreach (var account in ViewBag.Accounts)
+                                {
+                                    <option value="@account.AccountId">
+                                        @account.AccountId - Balance: @account.Balance.ToString("N2") @account.Currency?.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold"><i class="bi bi-phone me-1"></i> Recipient Mobile</label>
+                                <input type="text" id="recipientPhone" name="recipientPhone" class="form-control shadow-sm rounded-3" placeholder="01XXXXXXXXX" />
+                            </div>
+                            <div class="col-md-5 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-dark w-100 rounded-3" onclick="fetchRecipientAccounts()">
+                                    <i class="bi bi-search me-1"></i> Get Accounts
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold"><i class="bi bi-person-check me-1"></i> Select Recipient Account</label>
+                            <select id="recipientAccountId" name="recipientAccountId" class="form-select shadow-sm rounded-3">
+                                <option disabled selected>-- Select an account --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold"><i class="bi bi-cash-coin me-1"></i> Amount</label>
+                            <input type="number" name="amount" class="form-control shadow-sm rounded-3" placeholder="Enter amount" min="0.01" step="0.01" />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold rounded-3">
+                                <i class="bi bi-send-check-fill me-2"></i> Send Transaction
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function fetchRecipientAccounts() {
+            const phone = document.getElementById("recipientPhone").value;
+            const senderId = document.getElementById("senderAccountId").value;
+
+            if (!phone) {
+                alert("📱 Please enter a phone number.");
+                return;
+            }
+
+            fetch(`/Transaction/GetAccountsByPhone?phone=${encodeURIComponent(phone)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById("recipientAccountId");
+                    dropdown.innerHTML = "";
+
+                    if (data.length === 0) {
+                        dropdown.innerHTML = "<option disabled selected>No active accounts found</option>";
+                        return;
+                    }
+
+                    data.forEach(account => {
+                        // Prevent selecting the same account as both sender and recipient
+                        if (account.accountId == senderId) return;
+
+                        const option = document.createElement("option");
+                        option.value = account.accountId;
+                        option.text = `${account.fullName} - ${account.accountId} - ${account.accountTypeName} (${account.currency?.name})`;
+                        dropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching accounts:", error);
+                    alert("❌ Could not fetch recipient accounts.");
+                });
+        }
+    </script>
+}

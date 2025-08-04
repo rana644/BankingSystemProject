@@ -1,0 +1,151 @@
+﻿@model BankingSystem1.ViewModels.TransactionListViewModel
+@{
+    ViewData["Title"] = "My Transactions";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center text-success mb-4">📑 My Transactions</h2>
+
+    <!-- Sent Transactions -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-danger text-white fw-semibold">
+            Sent Transactions
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Sent Amount</th>
+                            <th>Received Amount</th>
+                            <th>Exchange Rate</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.SentTransactions.Any())
+                        {
+                            foreach (var t in Model.SentTransactions)
+                            {
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-user text-danger me-1"></i>
+                                        @($"{t.ReceiverAccount.User.FirstName} {t.ReceiverAccount.User.LastName}")
+                                        <br />
+                                        <small class="text-muted">@t.ReceiverAccount.AccountType?.TypeName</small>
+                                    </td>
+                                    <td class="text-danger fw-bold">
+                                        -@t.SenderAmount.ToString("F2") @t.SenderAccount.Currency?.Name
+                                    </td>
+                                    <td class="text-success">
+                                        @t.ReceiverAmount.ToString("F2") @t.ReceiverAccount.Currency?.Name
+                                    </td>
+                                    <td>@t.ExchangeRate.ToString("F4")</td>
+                                    <td><small>@t.Timestamp?.ToString("yyyy-MM-dd HH:mm")</small></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">No sent transactions found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Received Transactions -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white fw-semibold">
+            Received Transactions
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sender</th>
+                            <th>Sent Amount</th>
+                            <th>Received Amount</th>
+                            <th>Exchange Rate</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ReceivedTransactions.Any())
+                        {
+                            foreach (var t in Model.ReceivedTransactions)
+                            {
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-user text-success me-1"></i>
+                                        @($"{t.SenderAccount.User.FirstName} {t.SenderAccount.User.LastName}")
+                                        <br />
+                                        <small class="text-muted">@t.SenderAccount.AccountType?.TypeName</small>
+                                    </td>
+                                    <td class="text-danger">
+                                        -@t.SenderAmount.ToString("F2") @t.SenderAccount.Currency?.Name
+                                    </td>
+                                    <td class="text-success fw-bold">
+                                        +@t.ReceiverAmount.ToString("F2") @t.ReceiverAccount.Currency?.Name
+                                    </td>
+                                    <td>@t.ExchangeRate.ToString("F4")</td>
+                                    <td><small>@t.Timestamp?.ToString("yyyy-MM-dd HH:mm")</small></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">No received transactions found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Summary Chart -->
+    <div class="d-flex justify-content-center mt-4 mb-5">
+        <div style="width: 300px;">
+            <canvas id="transactionChart"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('transactionChart').getContext('2d');
+        const sent = @ViewBag.SentTotal ?? 0;
+        const received = @ViewBag.ReceivedTotal ?? 0;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sent', 'Received'],
+                datasets: [{
+                    label: 'Transaction Summary',
+                    data: [sent, received],
+                    backgroundColor: ['#dc3545', '#198754'], // Sent (red), Received (green)
+                    borderColor: ['#dc3545', '#198754'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+}
+
